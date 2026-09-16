@@ -75,21 +75,89 @@
             display: none;
         }
         #dbg-panel {
-            position: fixed; bottom: 12px; left: 12px;
-            background: rgba(0,0,0,0.75); color: #00FF88;
-            font-family: monospace; font-size: 13px;
-            padding: 8px 12px; border-radius: 6px;
-            z-index: 9999; pointer-events: none;
-            display: none; line-height: 1.7;
+            position: fixed;
+            bottom: 12px;
+            left: 12px;
+            background: rgba(0,0,0,0.75);
+            color: #00FF88;
+            font-family: monospace;
+            font-size: 13px;
+            padding: 8px 12px;
+            border-radius: 6px;
+            z-index: 9999;
+            pointer-events: none;
+            display: none;
+            line-height: 1.7;
         }
-        #dbg-panel.on { display: block; }
+
+        #dbg-panel.on {
+            display: block;
+        }
+
         #dbg-btn {
-            position: fixed; bottom: 12px; right: 12px;
-            background: rgba(0,0,0,0.75); color: #00FF88;
-            font-family: monospace; font-size: 12px;
-            padding: 6px 12px; border-radius: 6px;
-            z-index: 9999; cursor: pointer;
+            position: fixed;
+            bottom: 12px;
+            right: 12px;
+            background: rgba(0,0,0,0.75);
+            color: #00FF88;
+            font-family: monospace;
+            font-size: 12px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            z-index: 9999;
+            cursor: pointer;
             border: 1px solid #00FF88;
+            display: none;
+        }
+
+        #dbg-start-btn {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            background: #00AA44;
+            color: #FFFFFF;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-radius: 6px;
+            z-index: 9999;
+            cursor: pointer;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+            display: none;
+        }
+
+        #dbg-start-btn:hover {
+            background: #008A38;
+        }
+
+        #dbg-arrow-btn {
+            position: fixed;
+            top: 62px;
+            right: 18px;
+            background: #111111;
+            color: #00FF88;
+            font-family: monospace;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 10px 14px;
+            border-radius: 6px;
+            z-index: 9999;
+            cursor: pointer;
+            border: 2px solid #00FF88;
+            box-shadow: 0 8px 22px rgba(0,0,0,0.35);
+            display: none;
+        }
+
+        #dbg-arrow-btn:hover {
+            background: #1f1f1f;
+        }
+
+        body.debug-tools #dbg-btn,
+        body.debug-tools #dbg-start-btn,
+        body.debug-tools #dbg-arrow-btn {
+            display: block;
         }
         #corner-logo {
             position: fixed;
@@ -517,20 +585,62 @@
     </style>
 
     <script>
+        const ESCENAS_PUBLICAS = [
+            'fuera',
+            'entrada',
+            'jardin',
+            'explanada',
+            'eventos',
+            'butacas',
+            'aula',
+            'biblioteca',
+            'fisica',
+            'conducta',
+            'robotica',
+            'datalab',
+            'fablab',
+            'fablab2',
+            'estudio_pregrado',
+            'estudio_mba',
+            'cafeteria',
+            'cafeteria_interior'
+        ];
+        const ESCENA_INICIAL = 'fuera';
+        const ROTACIONES_INICIALES = {
+            'fuera': '0 14.90 0',
+            'entrada': '0 -269.98 0',
+            'jardin': '0 -414.48 0',
+            'explanada': '0 -362.11 0',
+            'eventos': '0 -376.43 0',
+            'butacas': '0 -370.13 0',
+            'aula': '0 -290.37 0',
+            'biblioteca': '0 -357.75 0',
+            'fisica': '0 -370.47 0',
+            'conducta': '0 -304.82 0',
+            'robotica': '0 -140.15 0',
+            'datalab': '0 79.30 0',
+            'fablab': '0 85.83 0',
+            'fablab2': '0 331.97 0',
+            'estudio_pregrado': '0 690.30 0',
+            'estudio_mba': '0 1047.60 0',
+            'cafeteria': '0 1073.61 0',
+            'cafeteria_interior': '0 1421.51 0'
+        };
+
         const nombresDestinos = {
             'fuera': 'Exterior ESAN',
-            'entrada': 'Entrada Principal', 'jardin': 'Jardin', 'fuente': 'Fuente',
-            'capilla': 'Capilla', 'fablab': 'FabLab 1', 'fablab2': 'FabLab 2',
+            'entrada': 'Entrada', 'jardin': 'Jardín', 'fuente': 'Fuente',
+            'capilla': 'Capilla', 'fablab': 'FabLab', 'fablab2': 'FabLab 2',
             'voley': 'Cancha de Voley', 'basquet': 'Cancha de Basquet',
-            'explanada': 'Explanada Convention', 'eventos': 'Eventos',
+            'explanada': 'Explanada', 'eventos': 'Eventos',
             'butacas': 'Butacas', 'biblioteca': 'Biblioteca', 'danza': 'Danza',
-            'edificioD': 'Edificio D', 'conducta': 'Lab Conducta', 'edificioA': 'Edificio A',
+            'edificioD': 'Edificio D', 'conducta': 'Lab de Conducta', 'edificioA': 'Edificio A',
             'ecoesan': 'EcoESAN', 'aula': 'Aula', 'laboratorio': 'Lab de Computo',
-            'datalab': 'Data Lab', 'cafeteria': 'Cafeteria', 'cafeteriaa': 'Cafeteria', 'cafeteria_interior': 'Cafeteria Interior',
-            'fisica': 'Lab de Fisica', 'quimica': 'Lab de Quimica',
+            'datalab': 'Data Lab', 'cafeteria': 'Cafetería', 'cafeteria_interior': 'Cafetería interior',
+            'fisica': 'Lab de Física', 'quimica': 'Lab de Quimica',
             'estudio_pregrado': 'Sala Estudio Pregrado', 'estudio_mba': 'Sala Estudio MBA',
             'estudio_magister': 'Sala Estudio Magister', 'descanso_magister': 'Sala Descanso Magister',
-            'robotica': 'Lab Robotica'
+            'robotica': 'Lab robótica'
         };
 
         AFRAME.registerGeometry('rounded-rect', {
@@ -721,9 +831,8 @@
                 imagen: 'imagenes/entrada esan_R.jpg',
                 rotacionSky: '0 -0 0',
                 flechas: [
-                    { target: 'jardin', position: '-1.42 2 -8.15', rotation: '0 25 0' },
-                    { target: 'jardin', position: '-11.87 0.8 1.75', rotation: '0 0 0' },
-                    { target: 'fuera', position: '8.77 -1 8.19', rotation: '0 180 0' }
+                    { target: 'jardin', position: '-11.83 2 2.01', rotation: '0 0 0' },
+                    { target: 'fuera', position: '8.66 2 -8.31', rotation: '0 0 0' }
                 ]
             },
             'jardin': {
@@ -861,7 +970,7 @@
             'butacas': { imagen: 'imagenes/butacas%20actualizado.jpg', rotacionSky: '0 -90 0', flechas: [{ target: 'eventos', position: '-8 5 25', rotation: '0 5 0' }, { target: 'biblioteca', position: '10.53 3.29 -4.71', rotation: '0 114 0', imgSrc: '#img-flecha-derecha' }] },
             'biblioteca': { imagen: 'imagenes/biblioteca.jpg', rotacionSky: '0 -90 0', flechas: [{ target: 'eventos', position: '17 -1 20', rotation: '0 40 0' }] },
             'danza': { imagen: 'imagenes/danza.jpg', rotacionSky: '0 -90 0', flechas: [{ target: 'eventos', position: '7 -1 -25', rotation: '0 180 0' }] },
-            'cafeteriaa': {
+            'cafeteria': {
                 imagen: 'imagenes/cafeteriaa.jpg', rotacionSky: '0 -90 0',
                 flechas: [
                     { target: 'edificioA', position: '-7.64 0.5 -9.26', rotation: '0 0 0' },
@@ -873,7 +982,7 @@
             'cafeteria_interior': {
                 imagen: 'imagenes/cafeteria_interior.jpg', rotacionSky: '0 -90 0',
                 flechas: [
-                    { target: 'cafeteriaa', position: '0 2.5 11', rotation: '0 180 0', label: 'Cafeteria Exterior' }
+                    { target: 'cafeteria', position: '0 2.5 11', rotation: '0 180 0', label: 'Cafetería' }
                 ]
             },
             'fuera': {
@@ -1245,6 +1354,7 @@
                 _transitioning = false;
                 cieloFondo.removeEventListener('materialtextureloaded', revelarEscena);
                 if (overlay) overlay.classList.remove('activo');
+                aplicarRotacionInicial(nombreEscena);
                 freeze.style.transition = 'opacity 450ms ease-out';
                 freeze.style.opacity    = '0';
                 setTimeout(function() { freeze.style.display = 'none'; freeze.style.backgroundImage = ''; }, 450);
@@ -1269,6 +1379,37 @@
 
             // Fallback de emergencia por si la textura nunca dispara el evento de carga
             setTimeout(revelarEscena, 8000);
+        }
+
+        function aplicarRotacionInicial(nombreEscena) {
+            var rotacion = ROTACIONES_INICIALES[nombreEscena] || '0 0 0';
+            var rig = document.getElementById('rig');
+            var camara = document.getElementById('camara-principal');
+            var partes = rotacion.trim().split(/\s+/).map(function(valor) { return parseFloat(valor) || 0; });
+            var toRad = Math.PI / 180;
+
+            if (rig) {
+                rig.removeAttribute('animation__intro');
+                rig.setAttribute('rotation', rotacion);
+                if (rig.object3D) {
+                    rig.object3D.rotation.set(partes[0] * toRad, partes[1] * toRad, partes[2] * toRad);
+                    rig.object3D.updateMatrixWorld(true);
+                }
+            }
+
+            if (camara) {
+                camara.setAttribute('rotation', '0 0 0');
+                if (camara.object3D) {
+                    camara.object3D.rotation.set(0, 0, 0);
+                    camara.object3D.updateMatrixWorld(true);
+                }
+
+                var lookControls = camara.components && camara.components['look-controls'];
+                if (lookControls) {
+                    if (lookControls.pitchObject) lookControls.pitchObject.rotation.x = 0;
+                    if (lookControls.yawObject) lookControls.yawObject.rotation.y = 0;
+                }
+            }
         }
 
 
@@ -1300,7 +1441,9 @@
             overlay.innerHTML = '';
             _flechas2D = [];
 
-            listaFlechas.forEach(function(flecha) {
+            listaFlechas.filter(function(flecha) {
+                return esEscenaPublica(flecha.target);
+            }).forEach(function(flecha) {
                 var pos = flecha.position.trim().split(/\s+/);
                 var pos3D = new THREE.Vector3(parseFloat(pos[0]), parseFloat(pos[1]), parseFloat(pos[2]));
 
@@ -1346,7 +1489,7 @@
 
         function construirMenu3D() {
             var menu = document.querySelector('#menu-3d');
-            var keys = Object.keys(nombresDestinos);
+            var keys = ESCENAS_PUBLICAS.filter(function(key) { return escenas[key]; });
 
             var panelFondo = document.createElement('a-entity');
             panelFondo.setAttribute('geometry', 'primitive: rounded-rect; width: 4.0; height: 3.6; radius: 0.15');
@@ -1457,7 +1600,7 @@
         }
 
         window.onload = function () {
-            var datos      = escenas['fuera'];
+            var datos      = escenas[ESCENA_INICIAL];
             var cieloFondo = document.querySelector('#cielo-fondo');
             var videoEl    = document.getElementById('video-intro-player');
             var overlayEl  = document.getElementById('video-intro');
@@ -1470,14 +1613,15 @@
                 _escenaMostrada = true;
                 _transitioning = false;
                 _appReady = true;
-                precargarTodo('fuera');
-                try { generarHotspots2D('fuera'); } catch(e) {}
-                try { generarVideos2D('fuera'); } catch(e) {}
+                precargarTodo(ESCENA_INICIAL);
+                try { generarHotspots2D(ESCENA_INICIAL); } catch(e) {}
+                try { generarVideos2D(ESCENA_INICIAL); } catch(e) {}
                 setTimeout(aplicarMarcosPaneles, 200);
                 setTimeout(function() {
                     var rig = document.getElementById('rig');
+                    var rotacionFinal = ROTACIONES_INICIALES[ESCENA_INICIAL] || '0 0 0';
                     if (rig) rig.setAttribute('animation__intro',
-                        'property: rotation; from: 0 180 0; to: 0 0 0; dur: 2800; easing: easeInOutCubic');
+                        'property: rotation; from: 0 180 0; to: ' + rotacionFinal + '; dur: 2800; easing: easeInOutCubic');
                 }, 400);
             }
 
@@ -1531,7 +1675,7 @@
             document.getElementById('card-backdrop').addEventListener('click', hideCard2D);
             document.getElementById('sidenav-toggle').addEventListener('click', function() { toggleSidenav(); });
             buildSidenav();
-            actualizarActivoSidenav('fuera');
+            actualizarActivoSidenav(ESCENA_INICIAL);
             if (window.innerWidth < 640) toggleSidenav(true);
 
             var darkbg = document.querySelector('#hotspot-darkbg');
@@ -1582,6 +1726,82 @@
             return; 
         }
 
+        function texto3DSeguro(texto) {
+            return String(texto || '').replace(/[<>]/g, '');
+        }
+
+        function crearLabelNegro3D(titulo, className) {
+            var cleanTitle = texto3DSeguro(titulo || '').replace(/\s+/g, ' ').trim();
+            if (!cleanTitle) return null;
+
+            var width = Math.min(Math.max(cleanTitle.length * 0.105 + 0.45, 1.20), 3.20);
+            var height = cleanTitle.length > 22 ? 0.54 : 0.42;
+
+            var label = document.createElement('a-entity');
+            label.classList.add(className || 'preview-label');
+            label.setAttribute('visible', 'true');
+            label.setAttribute('look-at', '[camera]');
+
+            var fondo = document.createElement('a-entity');
+            fondo.setAttribute('geometry', 'primitive: rounded-rect; width: ' + width.toFixed(2) + '; height: ' + height.toFixed(2) + '; radius: 0.07');
+            fondo.setAttribute('material', 'shader: flat; color: #111111; opacity: 0.9; transparent: true; depthTest: false');
+            fondo.setAttribute('position', '0 0 -0.02');
+            label.appendChild(fondo);
+
+            var titleText = document.createElement('a-entity');
+            titleText.setAttribute('troika-text', {
+                value: cleanTitle,
+                color: '#FFFFFF',
+                fontSize: cleanTitle.length > 22 ? 0.16 : 0.18,
+                maxWidth: width - 0.24,
+                textAlign: 'center',
+                anchorX: 'center',
+                anchorY: 'middle',
+                fontWeight: 'bold'
+            });
+            titleText.setAttribute('position', '0 0.02 0.03');
+            label.appendChild(titleText);
+
+            return label;
+        }
+
+        function crearPreviewHotspot(icono, titulo) {
+            var texto = (titulo || '').trim();
+            if (!texto) return null;
+
+            if (icono._hotspotPreviewEl) {
+                icono._hotspotPreviewEl.parentNode.removeChild(icono._hotspotPreviewEl);
+            }
+
+            var label = crearLabelNegro3D(texto, 'hotspot-preview');
+            if (!label) return null;
+            label.removeAttribute('look-at');
+            label.setAttribute('position', '0 1.55 0.08');
+            label.setAttribute('scale', '1.25 1.25 1.25');
+
+            icono._hotspotPreviewEl = label;
+            icono.appendChild(label);
+            return label;
+        }
+
+        function obtenerTargetHotspot(icono) {
+            var hotsData = icono.getAttribute('hotspot-info');
+            if (typeof hotsData === 'string') {
+                var m = hotsData.match(/target:\s*([^;]+)/);
+                return m ? m[1].trim().replace(/^#/, '') : '';
+            }
+            if (hotsData && hotsData.target) return String(hotsData.target).replace(/^#/, '');
+            return '';
+        }
+
+        function aplicarPreviewsHotspots() {
+            document.querySelectorAll('.icono-hotspot').forEach(function(icono) {
+                var targetId = obtenerTargetHotspot(icono);
+                var data = targetId ? window.panelData[targetId] : null;
+                if (data && data.titulo) crearPreviewHotspot(icono, data.titulo);
+            });
+        }
+
         var _loaderOculto = false;
         function ocultarLoader() {
             if (_loaderOculto) return;
@@ -1597,10 +1817,15 @@
         }
 
         const _preCache = {};
+        function esEscenaPublica(nombreEscena) {
+            return ESCENAS_PUBLICAS.indexOf(nombreEscena) !== -1;
+        }
+
         function precargarAdyacentes(nombreEscena) {
             var datos = escenas[nombreEscena];
             if (!datos || !datos.flechas) return;
             datos.flechas.forEach(function (flecha) {
+                if (!esEscenaPublica(flecha.target)) return;
                 var destino = escenas[flecha.target];
                 if (!destino) return;
                 var src = destino.imagen;
@@ -1615,7 +1840,7 @@
             // Adyacentes primero (prioridad alta), luego el resto con pequeño delay
             precargarAdyacentes(escenaActual);
             var cola = [];
-            Object.keys(escenas).forEach(function(nombre) {
+            ESCENAS_PUBLICAS.forEach(function(nombre) {
                 var src = escenas[nombre].imagen;
                 if (!src || src.startsWith('#') || _preCache[src]) return;
                 cola.push(src);
@@ -1816,16 +2041,12 @@
         }
 
         /* ── SIDE NAV ─────────────────────────────────────────── */
-        var _escenaActual = 'entrada';
+        var _escenaActual = ESCENA_INICIAL;
+        window._escenaActual = _escenaActual;
         var _sidenavBuilt = false;
 
         var _categoriasNav = [
-            { nombre: 'Exteriores',       escenas: ['fuera','entrada','jardin','fuente','capilla','voley','basquet','explanada','ecoesan'] },
-            { nombre: 'Eventos y Cultura', escenas: ['eventos','butacas','danza'] },
-            { nombre: 'Académico',         escenas: ['aula','biblioteca','edificioA','edificioD'] },
-            { nombre: 'Laboratorios',      escenas: ['fisica','quimica','conducta','laboratorio','datalab','robotica','fablab','fablab2'] },
-            { nombre: 'Sala de Estudios',  escenas: ['estudio_pregrado','estudio_mba','estudio_magister','descanso_magister'] },
-            { nombre: 'Servicios',         escenas: ['cafeteriaa','cafeteria_interior'] }
+            { nombre: 'Recorrido', escenas: ESCENAS_PUBLICAS }
         ];
 
         function buildSidenav() {
@@ -1863,6 +2084,7 @@
 
         function actualizarActivoSidenav(nombreEscena) {
             _escenaActual = nombreEscena;
+            window._escenaActual = nombreEscena;
             document.querySelectorAll('.sidenav-item').forEach(function(el) { el.classList.remove('activo'); });
             var activo = document.getElementById('snav-' + nombreEscena);
             if (activo) {
@@ -2127,7 +2349,7 @@
         <a-entity id="menu-3d" visible="false" scale="0.85 0.85 0.85"></a-entity>
 
         <a-entity id="hotspots-entrada" class="grupo-hotspots" visible="false">
-            <a-image src="#img-info-icon" position="-2.5 2.6 -8.0" scale="0.8 0.8 0.8" billboard
+            <a-image src="#img-info-icon" position="-11.95 2 -1.12" scale="0.8 0.8 0.8" billboard
                 class="icono-hotspot" hotspot-info="target: #panel-info-entrada; action: toggle">
             </a-image>
 
@@ -2166,7 +2388,7 @@
                 </a-plane>
             </a-entity> -->
 
-            <a-image src="#img-info-icon" position="-10.98 2 -4.84" scale="0.8 0.8 0.8" billboard
+            <a-image src="#img-info-icon" position="-4.77 2 11.01" scale="0.8 0.8 0.8" billboard
                 class="clickable icono-hotspot" hotspot-info="target: #panel-info-recepcion-visitas; action: toggle">
             </a-image>
 
@@ -2191,12 +2413,12 @@
                 class="clickable icono-hotspot" hotspot-info="target: #panel-info-jardin; action: toggle">
             </a-image>
 
-            <a-entity id="panel-info-jardin" data-imagen="imagenes/imgParaCards/arbolF.jpg" visible="false" smooth-follow card-style scale="1 1 1">
+            <a-entity id="panel-info-jardin" data-imagen="imagenes/imgParaCards/pinoF.webp" visible="false" smooth-follow card-style scale="1 1 1">
                 <a-plane color="#FFFFFF" opacity="0.95" width="4" height="1.6" position="0 0 0"></a-plane>
 
                 <a-text value="PINO ESAN" color="#E3173E" align="center" width="7" position="0 1.05 0.01"></a-text>
 
-                <a-text value="Nuestro gran emblema histórico que representa los 60 años de evolución del campus."
+                <a-text value="Nuestro gran emblema histórico que representa los 63 años de evolución del campus."
                     color="#333333" align="center" width="3.5" position="0 -0.1 0.01" wrap-count="35"></a-text>
 
                 <a-plane class="clickable close-btn" color="#FF0000" width="0.4" height="0.4" position="1.7 1.1 0.02"
@@ -2895,12 +3117,12 @@
             </a-entity>
         </a-entity>
 
-        <a-entity id="hotspots-cafeteriaa" class="grupo-hotspots" visible="false">
+        <a-entity id="hotspots-cafeteria" class="grupo-hotspots" visible="false">
             <a-image src="#img-info-icon" position="1.37 3 -11.92" rotation="0 0 0" scale="0.8 0.8 0.8" billboard
-                class="clickable icono-hotspot" hotspot-info="target: #panel-info-cafeteriaa; action: toggle">
+                class="clickable icono-hotspot" hotspot-info="target: #panel-info-cafeteria; action: toggle">
             </a-image>
 
-            <a-entity id="panel-info-cafeteriaa" data-imagen="imagenes/imgParaCards/comedorCentrarF.webp" visible="false" smooth-follow card-style scale="1 1 1">
+            <a-entity id="panel-info-cafeteria" data-imagen="imagenes/imgParaCards/cafeteriaF.webp" visible="false" smooth-follow card-style scale="1 1 1">
                 <a-plane color="#FFFFFF" opacity="0.95" width="4" height="1.6" position="0 0 0"></a-plane>
 
                 <a-text value="CAFETERÍA ESAN" color="#E3173E" align="center" width="7" position="0 1.25 0.01"></a-text>
@@ -2910,7 +3132,7 @@
                     color="#333333" align="center" width="3.5" position="0 -0.15 0.01" wrap-count="35"></a-text>
 
                 <a-plane class="clickable close-btn" color="#FF0000" width="0.4" height="0.4" position="1.75 1.3 0.02"
-                    hotspot-info="target: #panel-info-cafeteriaa; action: close">
+                    hotspot-info="target: #panel-info-cafeteria; action: close">
                     <a-text value="X" color="#FFFFFF" align="center" width="6" position="0 0 0.01"></a-text>
                 </a-plane>
             </a-entity>
@@ -3144,6 +3366,7 @@
             var imagenPos = panel.getAttribute('data-imagen-pos') || 'center';
             window.panelData[id] = { titulo: titulo, desc: desc, imagen: imagen, sceneName: sceneName, imagenPos: imagenPos };
         });
+        aplicarPreviewsHotspots();
     })();
     </script>
 
@@ -3238,7 +3461,9 @@
         <div style="border-top:1px solid #00FF8855;margin:4px 0"></div>
         <div>Click → <span id="dbg-pos">—</span></div>
     </div>
-    <div id="dbg-btn" onclick="dbgToggle()">📐 Coords</div>
+    <div id="dbg-btn" onclick="dbgToggle()">Coords</div>
+    <div id="dbg-start-btn" onclick="dbgCaptureStart()">Capturar inicio</div>
+    <div id="dbg-arrow-btn" onclick="dbgStartArrowCapture()">Capturar flecha</div>
 
     <script>
         function compartirRecorrido(event) {
@@ -3258,59 +3483,191 @@
             }
         }
 
-        var dbgOn = false, dbgRaf = null;
+        var dbgParams = new URLSearchParams(window.location.search);
+        var dbgEnabled = !dbgParams.has('nodebug');
+
+        if (dbgEnabled) {
+            document.body.classList.add('debug-tools');
+        }
+
+        var dbgOn = false;
+        var dbgRaf = null;
+        var dbgArrowCapturePending = false;
+
         function dbgToggle() {
             dbgOn = !dbgOn;
-            document.getElementById('dbg-panel').classList.toggle('on', dbgOn);
-            document.getElementById('dbg-btn').style.background = dbgOn ? 'rgba(0,150,60,0.9)' : 'rgba(0,0,0,0.75)';
+
+            var panel = document.getElementById('dbg-panel');
+            var button = document.getElementById('dbg-btn');
+            var scene = document.querySelector('a-scene');
+
+            if (!panel || !button || !scene) return;
+
+            panel.classList.toggle('on', dbgOn);
+            button.style.background = dbgOn ? 'rgba(0,150,60,0.9)' : 'rgba(0,0,0,0.75)';
+
             if (dbgOn) {
                 dbgRaf = requestAnimationFrame(dbgTick);
-                document.querySelector('a-scene').addEventListener('click', dbgClick);
+                scene.addEventListener('click', dbgClick);
             } else {
                 cancelAnimationFrame(dbgRaf);
-                document.querySelector('a-scene').removeEventListener('click', dbgClick);
+                scene.removeEventListener('click', dbgClick);
             }
         }
+
         function dbgTick() {
             var cam = document.getElementById('camara-principal');
+
             if (cam) {
-                var r = cam.getAttribute('rotation');
-                document.getElementById('dbg-y').textContent = r.y.toFixed(2);
-                document.getElementById('dbg-x').textContent = r.x.toFixed(2);
+                var r = cam.getAttribute('rotation') || { x: 0, y: 0, z: 0 };
+                document.getElementById('dbg-y').textContent = Number(r.y || 0).toFixed(2);
+                document.getElementById('dbg-x').textContent = Number(r.x || 0).toFixed(2);
             }
+
             dbgRaf = requestAnimationFrame(dbgTick);
         }
+
         function dbgClick(e) {
-            var pt = e.detail && e.detail.intersection && e.detail.intersection.point;
+            var pt = dbgPointFromEvent(e);
             if (!pt) return;
-            // Normaliza a dist=12 en XZ, Y fijo a 2 (altura ideal de flecha)
+
+            dbgCaptureArrowFromPoint(pt);
+        }
+
+        function dbgStartArrowCapture() {
+            var scene = document.querySelector('a-scene');
+            var button = document.getElementById('dbg-arrow-btn');
+
+            if (!scene || dbgArrowCapturePending) return;
+
+            dbgArrowCapturePending = true;
+
+            if (button) {
+                button.textContent = 'Haz clic en pantalla';
+                button.style.background = '#E3173E';
+                button.style.color = '#FFFFFF';
+                button.style.borderColor = '#FFFFFF';
+            }
+
+            scene.addEventListener('click', dbgArrowClickOnce, true);
+            dbgToast('Haz clic donde debe ir la flecha');
+        }
+
+        function dbgArrowClickOnce(e) {
+            var pt = dbgPointFromEvent(e);
+            var scene = document.querySelector('a-scene');
+            var button = document.getElementById('dbg-arrow-btn');
+
+            if (scene) {
+                scene.removeEventListener('click', dbgArrowClickOnce, true);
+            }
+
+            dbgArrowCapturePending = false;
+
+            if (button) {
+                button.textContent = 'Capturar flecha';
+                button.style.background = '#111111';
+                button.style.color = '#00FF88';
+                button.style.borderColor = '#00FF88';
+            }
+
+            if (!pt) {
+                dbgToast('No se detecto punto. Intenta otra zona del panorama.');
+                return;
+            }
+
+            dbgCaptureArrowFromPoint(pt);
+        }
+
+        function dbgPointFromEvent(e) {
+            var intersectionPoint = e.detail && e.detail.intersection && e.detail.intersection.point;
+            if (intersectionPoint) return intersectionPoint;
+
+            var mouseEvent = e.detail && e.detail.mouseEvent ? e.detail.mouseEvent : e;
+            var scene = document.querySelector('a-scene');
+            var camera = scene && scene.camera;
+            if (!camera || typeof THREE === 'undefined' || !mouseEvent || mouseEvent.clientX === undefined) return null;
+
+            var mouse = new THREE.Vector2(
+                (mouseEvent.clientX / window.innerWidth) * 2 - 1,
+                -(mouseEvent.clientY / window.innerHeight) * 2 + 1
+            );
+            var raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(mouse, camera);
+
+            return raycaster.ray.origin.clone().add(raycaster.ray.direction.clone().multiplyScalar(12));
+        }
+
+        function dbgCaptureArrowFromPoint(pt) {
             var dist = 12;
             var mag = Math.sqrt(pt.x * pt.x + pt.z * pt.z) || 1;
+
             var nx = (pt.x / mag * dist).toFixed(2);
             var nz = (pt.z / mag * dist).toFixed(2);
             var txt = nx + ' 2 ' + nz;
+
             var full = "{ target: 'DESTINO', position: '" + txt + "', rotation: '0 0 0' },";
+
             document.getElementById('dbg-pos').textContent = txt;
+            dbgCopy(full, 'Copiado: ' + full);
+        }
+
+        function dbgCaptureStart() {
+            var cam = document.getElementById('camara-principal');
+            var rig = document.getElementById('rig');
+            var sceneName = window._escenaActual || 'fuera';
+
+            if (!cam) return;
+
+            var camRot = cam.getAttribute('rotation') || { x: 0, y: 0, z: 0 };
+            var rigRot = rig && rig.getAttribute('rotation') || { x: 0, y: 0, z: 0 };
+
+            var yaw = Number(rigRot.y || 0) + Number(camRot.y || 0);
+            var rot = '0 ' + yaw.toFixed(2) + ' 0';
+
+            var full = "'" + sceneName + "': '" + rot + "',";
+
+            dbgCopy(full, 'Inicio copiado: ' + full);
+            console.log('INICIO ESCENA', full);
+        }
+
+        function dbgCopy(text, okMessage) {
             if (navigator.clipboard) {
-                navigator.clipboard.writeText(full).then(function () {
-                    dbgToast('Copiado: ' + full);
-                }).catch(function () { prompt('Copia esto:', full); });
+                navigator.clipboard.writeText(text).then(function () {
+                    dbgToast(okMessage);
+                }).catch(function () {
+                    prompt('Copia esto:', text);
+                });
             } else {
-                prompt('Copia esto:', full);
+                prompt('Copia esto:', text);
             }
         }
+
+        document.addEventListener('keydown', function (evt) {
+            var key = evt.key.toLowerCase();
+
+            if (!dbgEnabled) return;
+            if (key === 'i') dbgCaptureStart();
+            if (key === 'f') dbgStartArrowCapture();
+        });
+
         function dbgToast(msg) {
             var t = document.getElementById('dbg-toast');
+
             if (!t) {
                 t = document.createElement('div');
                 t.id = 'dbg-toast';
                 t.style.cssText = 'position:fixed;bottom:60px;right:12px;background:#00AA44;color:#fff;font-family:monospace;font-size:12px;padding:7px 12px;border-radius:6px;z-index:9999;pointer-events:none;';
                 document.body.appendChild(t);
             }
+
             t.textContent = msg;
             t.style.display = 'block';
+
             clearTimeout(t._to);
-            t._to = setTimeout(function () { t.style.display = 'none'; }, 2500);
+            t._to = setTimeout(function () {
+                t.style.display = 'none';
+            }, 2500);
         }
     </script>
 </body>
