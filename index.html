@@ -163,15 +163,18 @@
             position: fixed;
             top: 12px;
             right: 16px;
-            width: 58px;
-            height: 58px;
+            width: 72px;
+            height: 72px;
             object-fit: contain;
             padding: 0;
-            border: 2px solid #FFFFFF;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.18);
-            box-shadow: 0 3px 12px rgba(0,0,0,0.28);
-            z-index: 2500;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            z-index: 10000;
             pointer-events: none;
         }
 
@@ -294,7 +297,7 @@
         .sidenav-logo {
             position: relative;
             display: flex; align-items: center; justify-content: center;
-            padding: 20px 52px 16px 16px;
+            padding: 8px 14px;
             background: var(--color-primario);
             font-family: var(--font-titulo);
             font-size: 15px; font-weight: 700;
@@ -302,17 +305,15 @@
             flex-shrink: 0;
         }
         .sidenav-logo .sidenav-logo-mark {
-            position: absolute;
-            top: 50%;
-            right: 12px;
-            width: 34px; height: 34px;
+            position: static;
+            width: 190px; height: 54px;
             object-fit: contain;
-            transform: translateY(-50%);
+            transform: none;
             padding: 0;
-            border: 1.5px solid #FFFFFF;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.16);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            border: none;
+            border-radius: 0;
+            background: transparent;
+            box-shadow: none;
         }
         .sidenav-logo span { color: var(--color-blanco); opacity: 0.85; }
         .sidenav-body {
@@ -359,16 +360,17 @@
         .sidenav-footer {
             padding: 10px 14px 14px;
             border-top: 1px solid rgba(105,106,109,0.15);
+            background: var(--color-primario);
             flex-shrink: 0;
         }
         .sidenav-link {
             display: flex; align-items: center; gap: 6px;
-            color: var(--color-secundario);
+            color: var(--color-blanco);
             font-size: 11.5px; font-family: var(--font-cuerpo); font-weight: 400;
             text-decoration: none; padding: 7px 0;
             transition: color 0.2s;
         }
-        .sidenav-link:hover { color: var(--color-primario); }
+        .sidenav-link:hover { color: rgba(255,255,255,0.75); }
         .sidenav-share-icon {
             width: 18px; height: 18px; border-radius: 50%;
             background: #8E8E8E; color: #FFFFFF;
@@ -377,9 +379,15 @@
         }
         .sidenav-credit {
             display: flex; align-items: center; gap: 6px;
-            color: var(--color-secundario);
+            color: var(--color-blanco);
             font-size: 11.5px; font-family: var(--font-cuerpo); font-weight: 700;
             padding: 7px 0;
+        }
+        .sidenav-credit-logo {
+            width: 96px;
+            height: 22px;
+            object-fit: cover;
+            object-position: center;
         }
 
         /* ── 2D FLECHAS ───────────────────────────────────────── */
@@ -3427,14 +3435,13 @@
     <!-- ── 2D HOTSPOTS ──────────────────────────────────── -->
     <div id="hotspots-2d-overlay"></div>
     <div id="videos-2d-overlay"></div>
-    <img id="corner-logo" src="imagenes/pisoLogo.webp" alt="">
+    <img id="corner-logo" src="imagenes/pisoLogo.webp?v=3" alt="Isotipo ESAN">
 
     <!-- ── SIDE NAV ─────────────────────────────────────── -->
     <div id="sidenav">
         <button id="sidenav-toggle" title="Abrir/Cerrar menú">❮</button>
         <div class="sidenav-logo">
-            <span>Esan University</span>
-            <img class="sidenav-logo-mark" src="imagenes/pisoLogo.webp" alt="">
+            <img class="sidenav-logo-mark" src="imagenes/logoB.webp?v=3" alt="ESAN">
         </div>
         <div class="sidenav-body" id="sidenav-body"></div>
         <div class="sidenav-footer">
@@ -3450,7 +3457,8 @@
                 Copiar enlace
             </a>
             <div class="sidenav-credit">
-                Realizado por Esan Labs
+                <span>Realizado por</span>
+                <img class="sidenav-credit-logo" src="imagenes/EsanLabsL.webp?v=2" alt="ESAN Labs">
             </div>
         </div>
     </div>
@@ -3461,9 +3469,11 @@
         <div style="border-top:1px solid #00FF8855;margin:4px 0"></div>
         <div>Click → <span id="dbg-pos">—</span></div>
     </div>
+    <!-- Controles de captura deshabilitados
     <div id="dbg-btn" onclick="dbgToggle()">Coords</div>
     <div id="dbg-start-btn" onclick="dbgCaptureStart()">Capturar inicio</div>
     <div id="dbg-arrow-btn" onclick="dbgStartArrowCapture()">Capturar flecha</div>
+    -->
 
     <script>
         function compartirRecorrido(event) {
