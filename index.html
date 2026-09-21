@@ -637,7 +637,7 @@
 
         const nombresDestinos = {
             'fuera': 'Exterior ESAN',
-            'entrada': 'Entrada', 'jardin': 'Jardín', 'fuente': 'Fuente',
+            'entrada': 'Entrada', 'jardin': 'Ingresar al campus', 'fuente': 'Fuente',
             'capilla': 'Capilla', 'fablab': 'FabLab - sala 1', 'fablab2': 'FabLab - sala de impresiones',
             'voley': 'Cancha de Voley', 'basquet': 'Cancha de Basquet',
             'explanada': 'Explanada', 'eventos': 'Eventos',
@@ -1436,8 +1436,24 @@
                         s.el.style.visibility = 'hidden';
                     } else {
                         s.el.style.visibility = 'visible';
-                        s.el.style.left = ((v.x + 1) / 2 * W) + 'px';
+                        var screenX = (v.x + 1) / 2 * W;
+                        s.el.style.left = screenX + 'px';
                         s.el.style.top  = ((-v.y + 1) / 2 * H) + 'px';
+
+                        // Mantener el texto completo dentro de la pantalla cuando
+                        // la flecha se encuentra cerca de alguno de los bordes.
+                        var label = s.el.querySelector('.flecha-label');
+                        if (label) {
+                            var margin = 8;
+                            var halfWidth = label.offsetWidth / 2;
+                            var labelOffset = 0;
+                            if (screenX - halfWidth < margin) {
+                                labelOffset = margin - (screenX - halfWidth);
+                            } else if (screenX + halfWidth > W - margin) {
+                                labelOffset = (W - margin) - (screenX + halfWidth);
+                            }
+                            label.style.transform = 'translateX(' + labelOffset + 'px)';
+                        }
                     }
                 });
             }
@@ -2027,8 +2043,9 @@
                 var btn = document.createElement('div');
                 btn.className = 'video-2d';
                 if (data && data.video360) btn.classList.add('video-2d--v360');
+                var videoLabel = data && data.video360 ? 'Ver video 360' : 'Ver video';
                 btn.innerHTML =
-                    '<div class="video-2d-label">Ver video</div>' +
+                    '<div class="video-2d-label">' + videoLabel + '</div>' +
                     '<svg viewBox="0 0 96 58" aria-hidden="true">' +
                         '<rect x="3" y="3" width="90" height="52" rx="7" fill="#FF0000" stroke="#FFFFFF" stroke-width="4"/>' +
                         '<path d="M39 17 L39 41 L62 29 Z" fill="#FFFFFF"/>' +
