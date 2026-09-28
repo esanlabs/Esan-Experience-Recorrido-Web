@@ -639,7 +639,7 @@
 
         const nombresDestinos = {
             'fuera': 'Exterior ESAN',
-            'entrada': 'Entrada', 'jardin': 'Ingresar al campus', 'fuente': 'Fuente',
+            'entrada': 'Entrada', 'jardin': 'Jardín', 'fuente': 'Fuente',
             'capilla': 'Capilla', 'fablab': 'FabLab - sala 1', 'fablab2': 'FabLab - sala de impresiones',
             'voley': 'Cancha de Voley', 'basquet': 'Cancha de Basquet',
             'explanada': 'Explanada', 'eventos': 'Eventos',
@@ -841,7 +841,7 @@
                 imagen: 'imagenes/entrada esan_R.webp',
                 rotacionSky: '0 -0 0',
                 flechas: [
-                    { target: 'jardin', position: '-11.83 2 2.01', rotation: '0 0 0' },
+                    { target: 'jardin', position: '-11.83 2 2.01', rotation: '0 0 0', label: 'Ingresar a campus' },
                     { target: 'fuera', position: '8.66 2 -8.31', rotation: '0 0 0' }
                 ]
             },
@@ -3464,6 +3464,7 @@
         </div>
         <div class="sidenav-body" id="sidenav-body"></div>
         <div class="sidenav-footer">
+            <!-- Nuestra Historia (enlace e icono) deshabilitado temporalmente.
             <a class="sidenav-link" href="https://esanlabs.github.io/360VideosVR-Final-WEB/" target="_blank">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
                     <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
@@ -3471,6 +3472,7 @@
                 </svg>
                 Nuestra Historia
             </a>
+            -->
             <a class="sidenav-link" href="https://esanlabs.github.io/Esan-Experience-Recorrido-Web/" target="_blank"
                 onclick="compartirRecorrido(event)">
                 <span class="sidenav-share-icon">
